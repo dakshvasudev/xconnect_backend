@@ -4,7 +4,7 @@ use Exception;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Cardbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -29,7 +29,15 @@ class LoginController extends Controller{
         $result = DB::table('users')->select('avatar','name','description','type','token','access_token','online')->where($map)->first();
 
         if(empty($result)){
-            return ['code'=>0,'data'=>$result,'msg'=>'no user found'];
+            $validated["token"] = md5(uniqid().rand(10000,99999));
+            $validated["created_at"] = Carbon::now();
+            $validated["access_token"] = md5(uniqid().rand(1000000,9999999));
+            $validated["expire_date"] = Carbon::now()->addDays(30);
+            $user_id = DB::table("users")->insertGetId($validated);
+            $user_result = DB::table("users")->select("avatar","name","description","type","access_token","token","online")->where("id","=",$user_id)->first();
+            return ['code'=>0,'data'=>$user_result,'msg'=>'user has been created'];
+        }else{
+            return ['code'=>1,'data'=>$result,'msg'=>'user already exist'];
         }
 
     }
