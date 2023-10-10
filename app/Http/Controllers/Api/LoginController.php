@@ -22,6 +22,8 @@ class LoginController extends Controller{
         if($validator->fails()){
             return ['code'=>-1,"data"=>"no valid data","msg"=>$validator->errors()->first()];
         }
+
+        try{
         $validated = $validator->validated();
         $map = [];
         $map['type'] = $validated['type'];
@@ -46,8 +48,11 @@ class LoginController extends Controller{
                 ]
             );
             $result->access_token = $access_token;
-            return ['code'=>1,'data'=>$result,'msg'=>'user information updated'];
+            return ['code'=>0,'data'=>$result,'msg'=>'user information updated'];
         }
+       }catch (Exception $e) {
+        return ["code" => -1, "data" => "", "msg" => $e];
+      }
 
     }
 }
