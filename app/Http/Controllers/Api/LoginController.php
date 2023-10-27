@@ -51,9 +51,19 @@ class LoginController extends Controller{
             return ['code'=>0,'data'=>$result,'msg'=>'user information updated'];
         }
        }catch (Exception $e) {
-        return ["code" => -1, "data" => "", "msg" => $e];
+        return ["code" => -1, "data" => "no data available", "msg" => $e];
       }
 
+    }
+    public function contact(Request $request) {
+        try {
+            $token = $request->user_token;
+            $res = DB::table("users")->select("avatar", "description", "online", "token")->where("token", "!=", $token)->get();
+            
+            return ["code" => 0, "data" => $res, "msg" => "got all the users info"];
+        } catch (Exception $e) {
+            return ["code" => -1, "error" => $e->getMessage(), "msg" => "An error occurred"];
+        }
     }
 }
  
