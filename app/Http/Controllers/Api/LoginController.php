@@ -58,7 +58,7 @@ class LoginController extends Controller{
     public function contact(Request $request) {
         try {
             $token = $request->user_token;
-            $res = DB::table("users")->select("avatar", "description", "online", "token")->where("token", "!=", $token)->get();
+            $res = DB::table("users")->select("avatar", "description", "online", "token","name")->where("token", "!=", $token)->get();
             
             return ["code" => 0, "data" => $res, "msg" => "got all the users info"];
         } catch (Exception $e) {
